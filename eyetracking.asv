@@ -71,11 +71,11 @@ for jjj = 1 : frames
     mean_outs(end+1) = mean(out(:,1));
     
     click_count = 10;
-    dwell_area = 10;
+    dwell_area = 50;
     
     if length(mean_outs) == click_count && abs(mean_outs(end)-mean(mean_outs(1:end-1)))<=dwell_area
-        click_function
-        sprintf('Clicked!')
+%         click_function
+%         sprintf('Clicked!')
     elseif length(mean_outs) > click_count
         mean_outs = [];
     end
@@ -103,13 +103,16 @@ for jjj = 1 : frames
         scaledx=T(7)*(centerx/centerscalex);
         scaledy=T(8)*(centery/centerscaley);
         
-        scale_value = 1.5;
+        scale_valuex = 2;
+        scale_valuey = 2.5;
         
-        offsetx = (scaledx - centerscalex)*scale_value
-        offsety = (scaledy - centerscaley)*scale_value
+        offsetx = (scaledx - centerscalex)*scale_valuex;
+        offsety = (scaledy - centerscaley)*scale_valuey;
         
-        x = scaledx + offsetx - 
-        y = scaledy + offsety
+        x = scaledx + offsetx - centerscalex*2;
+        x = abs(x - 1600);
+%         y = scaledy + offsety;
+        y = sacl
         
         
         %         x=(T(7)-centerx/2)+T(7);

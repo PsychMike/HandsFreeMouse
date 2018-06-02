@@ -10,6 +10,7 @@ head_mouse = 1;
 
 % set length of video stream (if set to 'inf' stop video by closing figure
 frames = 2000
+mouse_delay = 1;
 % 20000
 
 % starting routine for video input
@@ -74,7 +75,7 @@ for jjj = 1 : frames
     dwell_area = 50;
     
     if length(mean_outs) == click_count && abs(mean_outs(end)-mean(mean_outs(1:end-1)))<=dwell_area
-        click_function
+%         click_function
 %         sprintf('Clicked!')
     elseif length(mean_outs) > click_count
         mean_outs = [];
@@ -103,15 +104,20 @@ for jjj = 1 : frames
         scaledx=T(7)*(centerx/centerscalex);
         scaledy=T(8)*(centery/centerscaley);
         
-        scale_valuex = 1.5;
-        scale_valuey = 2;
+        scale_valuex = 2.25;
+        scale_valuey = 5;
         
         offsetx = (scaledx - centerscalex)*scale_valuex;
         offsety = (scaledy - centerscaley)*scale_valuey;
         
         x = scaledx + offsetx - centerscalex*2;
-        x = abs(x - 1600);
-        y = scaledy + offsety;
+        x =(centerx*2) - (x+(x-centerx*2));
+%         x = abs(x-275 - centerx*2)
+%         x = x - 150;
+%         y = scaledy + offsety;
+        y = scaledy + offsety - centerscaley/2;
+        y =(y+(y-centery*2))
+%         y = abs(y + centery*2);
         
         
         %         x=(T(7)-centerx/2)+T(7);
@@ -125,7 +131,8 @@ for jjj = 1 : frames
     end
     try
         %     SetMouse(x+285,y+70);
-        if head_mouse
+        if head_mouse & ~mod(jjj,mouse_delay)
+%             move_function;
             SetMouse(x,y);
         end
         %         fail_count = 0;
