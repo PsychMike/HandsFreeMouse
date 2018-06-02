@@ -76,8 +76,8 @@ for jjj = 1 : frames
     
     mean_outs(end+1) = mean(out(:,1));
     
-    click_count = 10;
-    dwell_area = 50;
+    click_count = 30;
+    dwell_area = 30;
     
     if length(mean_outs) == click_count && abs(mean_outs(end)-mean(mean_outs(1:end-1)))<=dwell_area && clickable
         click_function;
