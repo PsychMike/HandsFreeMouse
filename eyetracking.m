@@ -5,6 +5,9 @@ clear all
 %Have mouse follow head position?
 head_mouse = 1;
 
+%Allow mouse to click?
+clickable = 1;
+
 %Show live webcam footage?
 show_stream = 1;
 
@@ -60,6 +63,8 @@ set(hFig,'NumberTitle','off');
 centerx = 800;
 centery = 450;
 
+mean_outs = [];
+
 % Loops for the set amount of frames
 for jjj = 1 : frames
     
@@ -67,10 +72,18 @@ for jjj = 1 : frames
     snapshot = getsnapshot(vid);
     
     % Main routine to detect distinct points for the eyes, nose and mouth
-    T = getPoints(snapshot);
+    [T,out] = getPoints(snapshot);
+    
+    mean_outs(end+1) = mean(out(:,1));
     
     click_count = 10;
     dwell_area = 50;
+    
+    if length(mean_outs) == click_count && abs(mean_outs(end)-mean(mean_outs(1:end-1)))<=dwell_area && clickable
+        click_function;
+    elseif length(mean_outs) > click_count
+        mean_outs = [];
+    end
     
     centerscalex = 320;
     centerscaley = 245;

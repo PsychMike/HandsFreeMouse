@@ -1,4 +1,4 @@
-function[T]=getPoints(snapshot0)
+function[T out]=getPoints(snapshot0)
 %
 % Purpose : Detection distinct points for Mouth, Nostrils, Eyes
 %
