@@ -1,4 +1,4 @@
-function[T out fail_count]=getPoints(snapshot0,fail_count)
+function[T]=getPoints(snapshot0)
 %
 % Purpose : Detection distinct points for Mouth, Nostrils, Eyes
 %
@@ -10,7 +10,7 @@ function[T out fail_count]=getPoints(snapshot0,fail_count)
 %   snapshot0 := RGB-Image (m-by-n-by-3 matrix)
 %
 % Return Parameters :
-%   out := 5-by-4 matrix; bounding boxes [y, x, y-width, x-width] of 
+%   out := 5-by-4 matrix; bounding boxes [y, x, y-width, x-width] of
 %           1:Face
 %           2:Mouth
 %           3:Right Eye
@@ -23,9 +23,9 @@ function[T out fail_count]=getPoints(snapshot0,fail_count)
 %           7:Right Pupil
 %           9:Left Pupil
 %           (k == x-values; k+1 == y-values)
-% 
+%
 % Description and algorithms:
-%   
+%
 %
 % Author : Peter Aldrian, Uwe Meier, Andre Pura
 % Date : August 12, 2009
@@ -43,14 +43,13 @@ T=-1;
 
 % only do, if a face was found
 if out ~=-1
-    fail_count = 0;
-%     get feature point of Mouth
+    %     get feature point of Mouth
     [x y]=getMouth((snapshot0(out(2,2):out(2,2)+out(2,4),out(2,1):out(2,1)+out(2,3),:)));
     T(1)=out(2,1)+x;
     T(2)=out(2,2)+y;
     
     
-%     get feature point of Eyes
+    %     get feature point of Eyes
     leftEye=(snapshot0(out(4,2):out(4,2)+out(4,4),out(4,1):out(4,1)+out(4,3),:));
     rightEye=(snapshot0(out(3,2):out(3,2)+out(3,4),out(3,1):out(3,1)+out(3,3),:));
     [x y xx yy]=getEyes(leftEye,rightEye);
@@ -59,11 +58,6 @@ if out ~=-1
     T(8)=out(3,2)+y;
     T(9)=out(4,1)+xx;
     T(10)=out(4,2)+yy;
-    
-else
-    
-    fail_count = fail_count + 1;
-    
 end
 
 

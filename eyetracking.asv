@@ -1,6 +1,6 @@
-% close all;
+try;close all;end
 try;stop(vid);end
-clear all;
+clear all
 
 %Sets up path for PsychToolbox (used for mouse control)
 addpath(genpath('Psychtoolbox'));
@@ -8,34 +8,48 @@ addpath(genpath('Psychtoolbox'));
 %Have mouse follow head position?
 head_mouse = 1;
 
-% set length of video stream (if set to 'inf' stop video by closing figure
-frames = 2000
-% 20000
+%Show live webcam footage?
+show_stream = 1;
 
-% starting routine for video input
+%Fullscreen or windowed
+
+%Set length of video stream (if set to 'inf' stop video by closing figure)
+frames = 2000;
+
+%How many seconds before the mouse position updates (set to 0 for no delay)
+mouse_delay = 0;
+
+% Starting routine for video input
 % Image Acquisition Toolbox has to be installed
-% vid=videoinput('winvideo',1,'MJPG_1280x720');
-vid=videoinput('winvideo',1,'RGB24_640x480');
+
+try
+    vid=videoinput('winvideo',1,'RGB24_640x480');
+catch
+    vid=videoinput('winvideo',1,'YUY2_640x480');
+end
 triggerconfig(vid,'manual');
 set(vid,'ReturnedColorSpace','rgb' );
 start(vid);
-% testvid;
 
-% start figure; for display purpose only
-scrsz = get(0,'ScreenSize');
-% fig = figure('CloseRequestFcn',{@my_closereq,vid},'units','normalized','outerposition',[0 0 1 1]);
-fig = figure('CloseRequestFcn',{@my_closereq,vid},'Position',scrsz);
+% Show display (fullscreen or windowed)
+if show_stream
+    if fullscreen
+        scrsz = get(0,'ScreenSize');
+        fig = figure('CloseRequestFcn',{@my_closereq,vid},'Position',scrsz);
+    else
+        fig = figure('CloseRequestFcn',{@my_closereq,vid},'units','normalized','outerposition',[0.25 0.25 0.5 0.5]);
+    end
+end
+
 % get the figure and axes handles
 hFig = gcf;
 hAx  = gca;
-% set the figure to full screen
-% set(hFig,'units','normalized','outerposition',[0 0 1 1]);
-% % set the axes to full screen
-% set(hAx,'Unit','normalized','Position',[0 0 1 1]);
+
 % hide the toolbar
-set(hFig,'menubar','none')
+% set(hFig,'menubar','none')
+
 % to hide the title
-set(hFig,'NumberTitle','off');
+% set(hFig,'NumberTitle','off');
 
 center_xcord = 28;
 left_xcord = 35;
@@ -103,16 +117,20 @@ for jjj = 1 : frames
         scaledx=T(7)*(centerx/centerscalex);
         scaledy=T(8)*(centery/centerscaley);
         
-        scale_valuex = 2;
-        scale_valuey = 2.5;
+        scale_valuex = 2.25;
+        scale_valuey = 5;
         
         offsetx = (scaledx - centerscalex)*scale_valuex;
         offsety = (scaledy - centerscaley)*scale_valuey;
         
         x = scaledx + offsetx - centerscalex*2;
-        x = abs(x - 1600);
+        x =(centerx*2) - (x+(x-centerx*2));
+%         x = abs(x-275 - centerx*2)
+%         x = x - 150;
 %         y = scaledy + offsety;
-        y = sacl
+        y = scaledy + offsety - centerscaley/2;
+        y =(y+(y-centery*2))
+%         y = abs(y + centery*2);
         
         
         %         x=(T(7)-centerx/2)+T(7);
@@ -126,7 +144,8 @@ for jjj = 1 : frames
     end
     try
         %     SetMouse(x+285,y+70);
-        if head_mouse
+        if head_mouse & ~mod(jjj,mouse_delay+1)
+%             move_function;
             SetMouse(x,y);
         end
         %         fail_count = 0;
