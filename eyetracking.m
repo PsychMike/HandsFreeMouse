@@ -41,9 +41,9 @@ set(vid,'ReturnedColorSpace','rgb' );
 start(vid);
 
 % Show display (fullscreen or windowed)
+scrsz = get(0,'ScreenSize');
 if show_stream
     if fullscreen
-        scrsz = get(0,'ScreenSize');
         fig = figure('CloseRequestFcn',{@my_closereq,vid},'Position',scrsz);
     else
         fig = figure('CloseRequestFcn',{@my_closereq,vid},'units','normalized','outerposition',[0.25 0.25 0.5 0.5]);
@@ -60,8 +60,8 @@ set(hFig,'menubar','none')
 % Hide the title
 set(hFig,'NumberTitle','off');
 
-centerx = 800;
-centery = 450;
+centerx = scrsz(3)/2;
+centery = scrsz(4)/2;
 
 mean_outs = [];
 
