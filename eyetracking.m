@@ -88,8 +88,10 @@ for jjj = 1 : frames
     dwell_area = 50;
     
     if length(mean_outs) == click_count && abs(mean_outs(end)-mean(mean_outs(1:end-1)))<=dwell_area && clickable
-        click_function;
-    elseif length(mean_outs) > click_count
+        left_click_function;
+    elseif length(mean_outs) == click_count*2 && abs(mean_outs(end)-mean(mean_outs(1:end-1)))<=dwell_area && clickable
+        right_click_function;
+    elseif length(mean_outs) > click_count*2
         mean_outs = [];
     end
     
