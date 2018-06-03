@@ -24,8 +24,8 @@ mouse_delay = 0;
 % Image Acquisition Toolbox has to be installed
 
 %Set resolution of the camera
-resolutionx = 640;
-resolutiony = 480;
+resolutionx = 1280;
+resolutiony = 720;
 resolution = sprintf('%dx%d',resolutionx,resolutiony);
 
 try
