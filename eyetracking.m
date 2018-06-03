@@ -15,7 +15,7 @@ show_stream = 1;
 fullscreen = 0;
 
 %Set length of video stream (if set to 'inf' stop video by closing figure)
-frames = 2000;
+frames = inf;
 
 %How many seconds before the mouse position updates (set to 0 for no delay)
 mouse_delay = 0;
@@ -23,16 +23,21 @@ mouse_delay = 0;
 % Starting routine for video input
 % Image Acquisition Toolbox has to be installed
 
+%Set resolution of the camera
+resolutionx = 640;
+resolutiony = 480;
+resolution = sprintf('%dx%d',resolutionx,resolutiony);
+
 try
-    vid=videoinput('winvideo',1,'RGB24_640x480');
+    vid=videoinput('winvideo',1,sprintf('RGB24_%s',resolution));
 catch
     try
-        vid=videoinput('winvideo',1,'YUY2_640x480');
+        vid=videoinput('winvideo',1,sprintf('YUY2_%s',resolution));
     catch
         try
-            vid=videoinput('winvideo',1,'MUPG_640x480');
+            vid=videoinput('winvideo',1,sprintf('MUPG_%s',resolution));
         catch
-            vid=videoinput('winvideo',1,'I420_640x480');
+            vid=videoinput('winvideo',1,sprintf('I420_%s',resolution));
         end
     end
 end
@@ -64,6 +69,9 @@ centerx = scrsz(3)/2;
 centery = scrsz(4)/2;
 
 mean_outs = [];
+lastTseven = [];
+lastTeight = [];
+buffer_count = 0;
 
 % Loops for the set amount of frames
 for jjj = 1 : frames
@@ -76,8 +84,8 @@ for jjj = 1 : frames
     
     mean_outs(end+1) = mean(out(:,1));
     
-    click_count = 30;
-    dwell_area = 30;
+    click_count = 10;
+    dwell_area = 50;
     
     if length(mean_outs) == click_count && abs(mean_outs(end)-mean(mean_outs(1:end-1)))<=dwell_area && clickable
         click_function;
@@ -85,40 +93,62 @@ for jjj = 1 : frames
         mean_outs = [];
     end
     
-    centerscalex = 320;
-    centerscaley = 245;
+    centerscalex = resolutionx/2;
+    centerscaley = resolutiony/2;
     
-    try
-        scaledx=T(7)*(centerx/centerscalex);
-        scaledy=T(8)*(centery/centerscaley);
-        
-        scale_valuex = 2.25;
-        scale_valuey = 5;
-        
-        offsetx = (scaledx - centerscalex)*scale_valuex;
-        offsety = (scaledy - centerscaley)*scale_valuey;
-        
-        x = scaledx + offsetx - centerscalex*2;
-        x =(centerx*2) - (x+(x-centerx*2));
-        
-        y = scaledy + offsety - centerscaley/2;
-        y =(y+(y-centery*2));
-        
-        if head_mouse && ~mod(jjj,mouse_delay+1)
-            move_function;
+    
+    if T~=-1
+        try
+            if buffer_count > 1
+                newpointx = mean([T(7) lastTseven]);
+                newpointy = mean([T(8) lastTeight]);
+            else
+                newpointx = T(7);
+                newpointy = T(8);
+            end
         end
         
-    end
-    
-    % Displaying snapshot and found points; for display purpose only
-    if T~=-1
-        imshow(snapshot,'InitialMagnification','fit');
-        hold on;
-        
-        for i=1:2:9
-            plot(T(i),T(i+1),'ro');
-            plot(T(i),T(i+1),'gx');
+        try
+            scaledx=newpointx*(centerx/centerscalex);
+            scaledy=newpointy*(centery/centerscaley);
             
+            sensitivityx = 5;
+            sensitivityy = 8;
+            
+            offsetx = (scaledx - centerx)*sensitivityx;
+            offsety = (scaledy - centery)*sensitivityy;
+            
+            x = centerx+offsetx;
+            y = centery+offsety;
+            
+            x = centerx*2-x;
+            
+            if head_mouse && ~mod(jjj,mouse_delay+1)
+                move_function;
+            end
+            
+        end
+        
+        % Displaying snapshot and found points; for display purpose only
+        if T~=-1
+            imshow(snapshot,'InitialMagnification','fit');
+            hold on;
+            
+            for i=1:2:9
+                plot(T(i),T(i+1),'ro');
+                plot(T(i),T(i+1),'gx');
+                
+            end
+        end
+        
+        try
+            lastTseven(end+1) = newpointx;
+            lastTeight(end+1) = newpointy;
+        end
+        
+        if length(lastTseven) > buffer_count
+            lastTseven = [];
+            lastTeight = [];
         end
     else
         imshow(snapshot);
