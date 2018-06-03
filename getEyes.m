@@ -62,7 +62,7 @@ if isempty(outRa) || isempty(outLa)
     subplot(1,2,2)
     imshow(outRa.o)
     pause(1);
-    selection = questdlg('Are these your Eyes?','Question','Yes','No','Yes');
+    selection = questdlg('Are these your eyes?','Question','Yes','No','Yes');
     switch selection
         case 'Yes'  
         case 'No'
