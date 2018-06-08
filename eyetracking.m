@@ -1,3 +1,5 @@
+%Mouse control edits made by Michael Hess, June '18
+
 try;close all;end
 try;stop(vid);end
 clear all
@@ -9,8 +11,8 @@ head_mouse = 1;
 clickable = 1;
 
 %Sensitivity settings:
-sensitivityX = 5;
-sensitivityY = 8;
+sensitivityX = 8;
+sensitivityY = 3.5;
 
 %Show live webcam footage?
 show_stream = 1;
@@ -104,8 +106,8 @@ for frame = 1:frames
     
     mean_outs(end+1) = mean(out(:,1));
     
-    click_count = 10;
-    dwell_area = 30;
+    click_count = 15;
+    dwell_area = 50;
     
     if length(mean_outs) == click_count && abs(mean_outs(end)-mean(mean_outs(1:end-1)))<=dwell_area && clickable
         left_click_function;
